@@ -26,9 +26,20 @@ Instantiate the connector by giving authentication details in the HTTP client co
 
 
 **Obtaining Tokens to Run the Sample**
-Login into [Graph API Explorer](https://developers.facebook.com/tools/explorer/) and get the access token.
 
-You can now enter the credentials in the HTTP client config:
+1. Setup a new web application client in the [Facebook APP console](https://developers.facebook.com/apps)
+2. Obtain client_id, client_secret and register a callback URL.
+3. Replace your client_id and redirect URI in the following URL and navigate to that URL in the browser. It will redirect you to a page allow the access with the required permission.
+    `https://www.facebook.com/v2.12/dialog/oauth?client_id=<your_client_id>&redirect_uri=<your_redirect_uri>&scope=<scopes>`
+4. After accepting the permission to allow access it will return a code in the url.
+5. Send a post request to with the above code to the following endpoint to get the access_token. Replace your client_id, client_secret, redirect_uri, and code(retrieved from step4).
+    `https://graph.facebook.com/oauth/access_token?client_id=<your_client_id>&redirect_uri=<your_redirect_uri>&client_secret=<your_client_secret>&code=<code>`
+6. You will get a user access token in the response.
+7. If you want to publish the post to a page you need to retrieve the page token by invoking the following endpoint:
+    `https://graph.facebook.com/v2.12/me/accounts`
+    Page token and page id will be returned in the response.
+
+You can now enter the user token to publish a post in your facebook user account or page token to publish a post in a facebook page in the HTTP client config:
 ```ballerina
 endpoint facebook:Client facebookEP {
     clientConfig:{

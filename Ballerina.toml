@@ -1,0 +1,6 @@
+[project]
+org-name = "keerthu"
+version = "0.8.1"
+authors = ["Keerthika"]
+keywords = ["facebook", "fb"]
+repository = "https://github.com/keerthu/package-facebook"

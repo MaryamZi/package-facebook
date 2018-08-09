@@ -1,11 +1,12 @@
 Connects to Facebook from Ballerina.
 
-# Package Overview
+# Ballerina Facebook Connector
+
 The Facebook connector allows you to create post, retrieve post, delete post, get friend list and get page access tokens through the Facebook Graph API. It handles OAuth 2.0 authentication.
 
 **Post Operations**
 
-The `Biruntha/facebook` package contains operations to create, get and delete posts.
+The `Biruntha/facebook` package contains operations to create post, retrieve post, delete post, get friend list and get page access tokens.
 
 ## Compatibility
 

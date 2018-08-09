@@ -16,13 +16,13 @@
 
 //API urls
 @final string BASE_URL = "https://graph.facebook.com";
-@final string VERSION = "/v2.12";
+@final string VERSION = "/v3.1";
 @final string FEED = "/feed";
+@final string FRIENDS = "/friends";
+@final string ACCOUNTS = "/accounts";
+@final string FIELDS = "?fields=from,created_time,is_published,message,updated_time,type";
 @final string VALUE_INPUT_OPTION = "valueInputOption=RAW";
 @final string BATCH_UPDATE_REQUEST = ":batchUpdate";
-
-//Secure client configs
-@final string SCHEME = "oauth";
 
 //Symbols
 @final string QUESTION_MARK = "?";

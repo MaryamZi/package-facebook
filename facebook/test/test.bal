@@ -20,7 +20,7 @@ import ballerina/test;
 
 string accessToken = config:getAsString("ACCESS_TOKEN");
 
-endpoint Client facebookClient {
+endpoint Client client {
     clientConfig:{
         auth:{
             accessToken:accessToken
@@ -28,25 +28,69 @@ endpoint Client facebookClient {
     }
 };
 
-Post fbPost = {};
+AccessTokens accessTokenList = {};
+string pageToken;
 
 @test:Config
-function testCreatePost() {
-    io:println("-----------------Test case for createPost method------------------");
-    var fbRes = facebookClient->createPost("me","testBalMessage","","");
+function testGetPageAccessTokens() {
+    io:println("-----------------Test case for GetPageAccessTokens method------------------");
+    var fbRes = client->getPageAccessTokens("me");
     match fbRes {
-        Post post => fbPost = post;
+        AccessTokens list => accessTokenList = list;
         FacebookError e => test:assertFail(msg = e.message);
     }
-    test:assertNotEquals(fbPost.id, null, msg = "Failed to create post");
+    pageToken = accessTokenList.data[0].pageAccessToken;
+    test:assertNotEquals(accessTokenList.data, null, msg = "Failed to get page access tokens");
+}
+
+@test:Config
+function testGetFriendListDetails() {
+    io:println("-----------------Test case for GetFriendListDetails method------------------");
+    FriendList friendList = {};
+    var fbRes = client->getFriendListDetails("me");
+    match fbRes {
+        FriendList list => friendList = list;
+        FacebookError e => test:assertFail(msg = e.message);
+    }
+    test:assertNotEquals(friendList.data, null, msg = "Failed to get friend list");
+    test:assertNotEquals(friendList.summary.totalCount, null, msg = "Failed to get friend list");
+}
+
+Post facebookPost = {};
+
+@test:Config {
+    dependsOn:["testGetPageAccessTokens"]
+}
+function testCreatePost() {
+    endpoint Client facebookClient {
+        clientConfig:{
+            auth:{
+                accessToken:pageToken
+            }
+        }
+    };
+    io:println("-----------------Test case for createPost method------------------");
+    var fbRes = facebookClient->createPost("me","testBalMeassage","","");
+    match fbRes {
+        Post post => facebookPost = post;
+        FacebookError e => test:assertFail(msg = e.message);
+    }
+    test:assertNotEquals(facebookPost.id, null, msg = "Failed to create post");
 }
 
 @test:Config {
-    dependsOn:["testCreatePost"]
+    dependsOn:["testGetPageAccessTokens", "testCreatePost"]
 }
 function testRetrievePost() {
+    endpoint Client facebookClient {
+        clientConfig:{
+            auth:{
+                accessToken:pageToken
+            }
+        }
+    };
     io:println("-----------------Test case for retrievePost method------------------");
-    var fbRes = facebookClient->retrievePost(fbPost.id);
+    var fbRes = facebookClient->retrievePost(facebookPost.id);
     match fbRes {
         Post post => test:assertNotEquals(post.id, null, msg = "Failed to retrieve the post");
         FacebookError e => test:assertFail(msg = e.message);
@@ -54,13 +98,21 @@ function testRetrievePost() {
 }
 
 @test:Config {
-    dependsOn:["testRetrievePost"]
+    dependsOn:["testGetPageAccessTokens", "testRetrievePost"]
 }
 function testDeletePost() {
+    endpoint Client facebookClient {
+        clientConfig:{
+            auth:{
+                accessToken:pageToken
+            }
+        }
+    };
     io:println("-----------------Test case for deletePost method------------------");
-    var fbRes = facebookClient->deletePost(fbPost.id);
+    var fbRes = facebookClient->deletePost(facebookPost.id);
     match fbRes {
         boolean isDeleted => test:assertTrue(isDeleted, msg = "Failed to delete the post!");
         FacebookError e => test:assertFail(msg = e.message);
     }
 }
+

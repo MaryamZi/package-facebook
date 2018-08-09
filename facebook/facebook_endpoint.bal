@@ -16,47 +16,17 @@
 
 import ballerina/http;
 
-documentation {FacebookConfiguration is used to set up the Facebook configuration. In order to use
-this connector, you need to provide the valid access token.
-    F{{clientConfig}} - The HTTP client congiguration
-}
-public type FacebookConfiguration {
-    http:ClientEndpointConfig clientConfig = {};
-};
-
-documentation {Facebook Endpoint object.
-    E{{}}
-    F{{facebookConfig}} - Facebook client endpoint configuration object
-    F{{facebookConnector}} - Facebook connector object
-}
-public type Client object {
-    public {
-        FacebookConfiguration facebookConfig = {};
-        FacebookConnector facebookConnector = new;
-    }
-
-    documentation {Facebook endpoint initialization function
-        P{{facebookConfig}} - Facebook client endpoint configuration object
-    }
-    public function init(FacebookConfiguration facebookConfig);
-
-    documentation {Get Facebook connector client
-        R{{}} - Facebook connector client
-    }
-    public function getCallerActions() returns FacebookConnector;
-};
-
-public function Client::init(FacebookConfiguration facebookConfig) {
-    facebookConfig.clientConfig.url = BASE_URL;
-    match facebookConfig.clientConfig.auth {
+function Client::init(FacebookConfiguration config) {
+    config.clientConfig.url = BASE_URL;
+    match config.clientConfig.auth {
         () => {}
         http:AuthConfig authConfig => {
-            authConfig.scheme = SCHEME;
+            authConfig.scheme = http:OAUTH2;
         }
     }
-    self.facebookConnector.httpClient.init(facebookConfig.clientConfig);
+    self.facebookConnector.httpClient.init(config.clientConfig);
 }
 
-public function Client::getCallerActions() returns FacebookConnector {
+function Client::getCallerActions() returns FacebookConnector {
     return self.facebookConnector;
 }

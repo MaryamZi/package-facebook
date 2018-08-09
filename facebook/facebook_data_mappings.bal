@@ -16,8 +16,63 @@
 
 function convertToPost(json jsonPost) returns Post {
     Post post = {};
+    Profile profile = {};
     post.id = jsonPost.id.toString();
     post.message = jsonPost.message != null ? jsonPost.message.toString() : "";
-    post.created_time = jsonPost.created_time != null ? jsonPost.created_time.toString() : "";
+    post.createdTime = jsonPost.created_time != null ? jsonPost.created_time.toString() : "";
+    post.updatedTime = jsonPost.updated_time != null ? jsonPost.updated_time.toString() : "";
+    post.postType = jsonPost["type"] != null ? jsonPost["type"].toString() : "";
+    post.isPublished = jsonPost.is_published != null ? convertToBoolean(jsonPost.is_published) : false;
+    profile.id = jsonPost["from"].id != null ? jsonPost["from"].id.toString() : "";
+    profile.name = jsonPost["from"].name != null ? jsonPost["from"].name.toString() : "";
+    post.fromObject = profile;
     return post;
+}
+
+function convertToBoolean(json jsonVal) returns (boolean) {
+    string stringVal = jsonVal.toString();
+    return <boolean>stringVal;
+}
+
+function convertToFriendList(json jsonFriend) returns FriendList {
+    FriendList friendList = {};
+    Summary summary = {};
+    summary.totalCount = jsonFriend.summary.total_count != null ? jsonFriend.summary.total_count.toString() : "";
+    friendList.summary = summary;
+    friendList.data = convertToDatas(jsonFriend.data);
+    return friendList;
+}
+
+function convertToDatas(json jsonDatas) returns Data[] {
+    Data[] dataArray = [];
+    int i = 0;
+    foreach jsonData in jsonDatas {
+        Data data = {};
+        data.id = jsonData.id != null ? jsonData.id.toString() : "";
+        data.name = jsonData.name != null ? jsonData.name.toString() : "";
+        dataArray[i] = data;
+        i = i + 1;
+    }
+    return dataArray;
+}
+
+function convertToAccessTokens(json jsonToken) returns AccessTokens {
+    AccessTokens accessTokens = {};
+    accessTokens.data = convertToAccessTokenData(jsonToken.data);
+    return accessTokens;
+}
+
+function convertToAccessTokenData(json jsonData) returns AccessTokenData[] {
+    AccessTokenData[] tokenData = [];
+    int i = 0;
+    foreach data in jsonData {
+        AccessTokenData accessTokenData = {};
+        accessTokenData.category = data.category != null ? data.category.toString() : "";
+        accessTokenData.pageAccessToken = data.access_token != null ? data.access_token.toString() : "";
+        accessTokenData.pageId = data.id != null ? data.id.toString() : "";
+        accessTokenData.pageName = data.name != null ? data.name.toString() : "";
+        tokenData[i] = accessTokenData;
+        i = i + 1;
+    }
+    return tokenData;
 }

@@ -1,32 +1,31 @@
 Connects to Facebook from Ballerina.
 
 # Package Overview
-The Facebook connector allows you to create retrieve and delete posts through the Facebook Graph API. It handles OAuth 2.0 authentication.
+The Facebook connector allows you to create post, retrieve post, delete post, get friend list and get page access tokens through the Facebook Graph API. It handles OAuth 2.0 authentication.
 
 **Post Operations**
 
-The `keerthu/facebook` package contains operations to create, get and delete posts.
+The `Biruntha/facebook` package contains operations to create, get and delete posts.
 
 ## Compatibility
 
 |                                 |       Version                  |
 |  :---------------------------:  |  :---------------------------: |
-|  Ballerina Language             |   0.970.0                      |
-|  Facebook API                   |   v2.12                        |
+|  Ballerina Language             |   0.981.0                      |
+|  Facebook API                   |   v3.1                        |
 
 ## Sample
 
-First, import the `keerthu/facebook` package into the Ballerina project.
+First, import the `Biruntha/facebook` package into the Ballerina project.
 
 ```ballerina
-import keerthu/facebook;
+import Biruntha/facebook;
 ```
 
 Instantiate the connector by giving authentication details in the HTTP client config. The HTTP client config has built-in support for BasicAuth and OAuth 2.0. Facebook uses OAuth 2.0 to authenticate and authorize requests. The Facebook connector can be instantiated in the HTTP client config using the access token.
 
 
-**Obtaining Tokens to Run the Sample**
-Login into [Graph API Explorer](https://developers.facebook.com/tools/explorer/) and get the access token.
+**Run the Sample**
 
 You can now enter the credentials in the HTTP client config:
 ```ballerina

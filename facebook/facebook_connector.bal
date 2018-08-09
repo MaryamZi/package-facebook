@@ -17,43 +17,10 @@
 import ballerina/mime;
 import ballerina/http;
 
-documentation {Facebook client connector
-    F{{httpClient}} - The HTTP Client
-}
-public type FacebookConnector object {
-    public {
-        http:Client httpClient = new;
-    }
-
-    documentation {Create a new post
-        P{{id}} - The identifier
-        P{{msg}} - The main body of the post
-        P{{link}} - The URL of a link to attach to the post
-        P{{place}} - Page ID of a location associated with this post
-        R{{}} - Post object on success and FacebookError on failure
-    }
-    public function createPost(string id, string msg, string link, string place) returns Post|FacebookError;
-
-    documentation {Retrieve a post
-        P{{postId}} - The post ID
-        R{{}} - Post object on success and FacebookError on failure
-    }
-    public function retrievePost(string postId) returns Post|FacebookError;
-
-    documentation {Delete a post
-        P{{postId}} - The post ID
-        R{{}} - True on success and FacebookError on failure
-    }
-    public function deletePost(string postId) returns (boolean)|FacebookError;
-
-};
-
-public function FacebookConnector::createPost(string id, string msg, string link, string place)
-                                                    returns Post|FacebookError {
+function FacebookConnector::createPost(string id, string msg, string link, string place) returns Post|FacebookError {
     endpoint http:Client httpClient = self.httpClient;
     http:Request request = new;
     FacebookError facebookError = {};
-    Post fbPost = {};
     string facebookPath = VERSION + PATH_SEPARATOR + id + FEED_PATH;
     string uriParams;
     uriParams = msg != EMPTY_STRING ? MESSAGE + check http:encode(msg, UTF_8) : uriParams;
@@ -61,7 +28,8 @@ public function FacebookConnector::createPost(string id, string msg, string link
     uriParams = place != EMPTY_STRING ? PLACE + check http:encode(place, UTF_8) : uriParams;
     facebookPath = facebookPath + QUESTION_MARK + uriParams.substring(1, uriParams.length());
     request.setHeader("Accept", "application/json");
-    var httpResponse = httpClient->post(facebookPath, request = request);
+    var httpResponse = httpClient->post(facebookPath, request);
+
     match httpResponse {
         error err => {
             facebookError.message = err.message;
@@ -79,7 +47,7 @@ public function FacebookConnector::createPost(string id, string msg, string link
                 }
                 json jsonResponse => {
                     if (statusCode == http:OK_200) {
-                        fbPost = convertToPost(jsonResponse);
+                        Post fbPost = convertToPost(jsonResponse);
                         return fbPost;
                     } else {
                         facebookError.message = jsonResponse.error.message.toString();
@@ -92,14 +60,14 @@ public function FacebookConnector::createPost(string id, string msg, string link
     }
 }
 
-public function FacebookConnector::retrievePost(string postId) returns Post|FacebookError {
+function FacebookConnector::retrievePost(string postId) returns Post|FacebookError {
     endpoint http:Client httpClient = self.httpClient;
     http:Request request = new;
     FacebookError facebookError = {};
-    Post fbPost = {};
-    string facebookPath = VERSION + PATH_SEPARATOR + postId;
+    string facebookPath = VERSION + PATH_SEPARATOR + postId + FIELDS;
     request.setHeader("Accept", "application/json");
-    var httpResponse = httpClient->get(facebookPath, request = request);
+    var httpResponse = httpClient->get(facebookPath, message = request);
+
     match httpResponse {
         error err => {
             facebookError.message = err.message;
@@ -117,7 +85,7 @@ public function FacebookConnector::retrievePost(string postId) returns Post|Face
                 }
                 json jsonResponse => {
                     if (statusCode == http:OK_200) {
-                        fbPost = convertToPost(jsonResponse);
+                        Post fbPost = convertToPost(jsonResponse);
                         return fbPost;
                     } else {
                         facebookError.message = jsonResponse.error.message.toString();
@@ -130,14 +98,14 @@ public function FacebookConnector::retrievePost(string postId) returns Post|Face
     }
 }
 
-    public function FacebookConnector::deletePost(string postId) returns (boolean)|FacebookError {
+function FacebookConnector::deletePost(string postId) returns (boolean)|FacebookError {
     endpoint http:Client httpClient = self.httpClient;
     http:Request request = new;
     FacebookError facebookError = {};
-    Post fbPost = {};
     string facebookPath = VERSION + PATH_SEPARATOR + postId;
     request.setHeader("Accept", "application/json");
-    var httpResponse = httpClient->get(facebookPath, request = request);
+    var httpResponse = httpClient->get(facebookPath, message = request);
+
     match httpResponse {
         error err => {
             facebookError.message = err.message;
@@ -156,6 +124,82 @@ public function FacebookConnector::retrievePost(string postId) returns Post|Face
                 json jsonResponse => {
                     if (statusCode == http:OK_200) {
                         return true;
+                    } else {
+                        facebookError.message = jsonResponse.error.message.toString();
+                        facebookError.statusCode = statusCode;
+                        return facebookError;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function FacebookConnector::getFriendListDetails(string userId) returns FriendList|FacebookError {
+    endpoint http:Client httpClient = self.httpClient;
+    http:Request request = new;
+    FacebookError facebookError = {};
+    string facebookPath = VERSION + PATH_SEPARATOR + userId + FRIENDS;
+    request.setHeader("Accept", "application/json");
+    var httpResponse = httpClient->get(facebookPath, message = request);
+
+    match httpResponse {
+        error err => {
+            facebookError.message = err.message;
+            facebookError.cause = err.cause;
+            return facebookError;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            var facebookJSONResponse = response.getJsonPayload();
+            match facebookJSONResponse {
+                error err => {
+                    facebookError.message = "Error occured while extracting Json Payload";
+                    facebookError.cause = err.cause;
+                    return facebookError;
+                }
+                json jsonResponse => {
+                    if (statusCode == http:OK_200) {
+                        FriendList friendList = convertToFriendList(jsonResponse);
+                        return friendList;
+                    } else {
+                        facebookError.message = jsonResponse.error.message.toString();
+                        facebookError.statusCode = statusCode;
+                        return facebookError;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function FacebookConnector::getPageAccessTokens(string userId) returns AccessTokens|FacebookError {
+    endpoint http:Client httpClient = self.httpClient;
+    http:Request request = new;
+    FacebookError facebookError = {};
+    string facebookPath = VERSION + PATH_SEPARATOR + userId + ACCOUNTS;
+    request.setHeader("Accept", "application/json");
+    var httpResponse = httpClient->get(facebookPath, message = request);
+
+    match httpResponse {
+        error err => {
+            facebookError.message = err.message;
+            facebookError.cause = err.cause;
+            return facebookError;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            var facebookJSONResponse = response.getJsonPayload();
+            match facebookJSONResponse {
+                error err => {
+                    facebookError.message = "Error occured while extracting Json Payload";
+                    facebookError.cause = err.cause;
+                    return facebookError;
+                }
+                json jsonResponse => {
+                    if (statusCode == http:OK_200) {
+                        AccessTokens accessTokens = convertToAccessTokens(jsonResponse);
+                        return accessTokens;
                     } else {
                         facebookError.message = jsonResponse.error.message.toString();
                         facebookError.statusCode = statusCode;

@@ -99,8 +99,8 @@ The `getFriendListDetails` function used to get the User's friends who have inst
 ```ballerina
 var fbRes = facebookEP.getFriendListDetails(userId);
 match fbRes {
-    boolean b => io:println(b);
-    facebook:FacebookError e => io:println(e);
+    FriendList list => { friendList = list; io:println(friendList); }
+    FacebookError e => test:assertFail(msg = e.message);
 }
 ```
 
@@ -108,7 +108,7 @@ The `getPageAccessTokens` function used to get the page access tokens. The `user
 ```ballerina
 var fbRes = facebookEP.getPageAccessTokens(userId);
 match fbRes {
-    boolean b => io:println(b);
-    facebook:FacebookError e => io:println(e);
+    AccessTokens list => { accessTokenList = list; io:println(accessTokenList); }
+    FacebookError e => test:assertFail(msg = e.message);
 }
 ```

@@ -6,7 +6,7 @@ The Facebook connector allows you to create post, retrieve post, delete post, ge
 
 **Post Operations**
 
-The `Biruntha/facebook` package contains operations to create post, retrieve post, delete post, get friend list and get page access tokens.
+The `biruntha13/facebook` package contains operations to create post, retrieve post, delete post, get friend list and get page access tokens.
 
 ## Compatibility
 
@@ -17,10 +17,10 @@ The `Biruntha/facebook` package contains operations to create post, retrieve pos
 
 ## Sample
 
-First, import the `Biruntha/facebook` package into the Ballerina project.
+First, import the `biruntha13/facebook` package into the Ballerina project.
 
 ```ballerina
-import Biruntha/facebook;
+import biruntha13/facebook;
 ```
 
 Instantiate the connector by giving authentication details in the HTTP client config. The HTTP client config has built-in support for BasicAuth and OAuth 2.0. Facebook uses OAuth 2.0 to authenticate and authorize requests. The Facebook connector can be instantiated in the HTTP client config using the access token.

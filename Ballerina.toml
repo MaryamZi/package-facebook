@@ -1,6 +1,6 @@
 [project]
-org-name = "Biruntha"
-version = "0.8.2"
+org-name = "biruntha13"
+version = "0.8.3"
 authors = ["WSO2"]
 keywords = ["facebook", "fb"]
 repository = "https://github.com/Biruntha/package-facebook"

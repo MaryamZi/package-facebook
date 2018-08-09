@@ -94,3 +94,21 @@ match fbRes {
     facebook:FacebookError e => io:println(e);
 }
 ```
+
+The `getFriendListDetails` function used to get the User's friends who have installed the app making the query. The `userId` represents the ID of the user. It returns the `FriendList` object on success and `FacebookError` on failure.
+```ballerina
+var fbRes = facebookEP.getFriendListDetails(userId);
+match fbRes {
+    boolean b => io:println(b);
+    facebook:FacebookError e => io:println(e);
+}
+```
+
+The `getPageAccessTokens` function used to get the page access tokens. The `userId` represents the ID of the user. It returns the `AccessTokens` object on success and `FacebookError` on failure.
+```ballerina
+var fbRes = facebookEP.getPageAccessTokens(userId);
+match fbRes {
+    boolean b => io:println(b);
+    facebook:FacebookError e => io:println(e);
+}
+```

@@ -5,7 +5,7 @@ The Facebook connector allows you to create post, retrieve post, delete post, ge
 
 **Post Operations**
 
-The `biruntha13/facebook` package contains operations to create, get and delete posts.
+The `biruntha13/facebook` package contains operations to create post, retrieve post, delete post, get friend list and get page access tokens.
 
 ## Compatibility
 
@@ -36,10 +36,10 @@ Instantiate the connector by giving authentication details in the HTTP client co
     `https://graph.facebook.com/oauth/access_token?client_id=<your_client_id>&redirect_uri=<your_redirect_uri>&client_secret=<your_client_secret>&code=<code>`
 6. You will get a user access token in the response.
 7. If you want to publish the post to a page you need to retrieve the page token by invoking the following facebook connector method with the user access token you obtain in the step 6:
-    `getPageAccessTokens(userId)`
+    `getPageAccessTokens(userId)`.
     Page token and page details will be returned in the response.
 
-    For this enter user token in the following HTTP client config to use getPageAccessTokens(userId):
+    For this enter user token in the following HTTP client config to use `getPageAccessTokens(userId)`:
     ```ballerina
     endpoint facebook:Client facebookEP {
         clientConfig:{
@@ -100,7 +100,7 @@ The `getFriendListDetails` function used to get the User's friends who have inst
 var fbRes = facebookEP.getFriendListDetails(userId);
 match fbRes {
     FriendList list => { friendList = list; io:println(friendList); }
-    FacebookError e => test:assertFail(msg = e.message);
+    FacebookError e => io:println(e);
 }
 ```
 
@@ -109,7 +109,7 @@ The `getPageAccessTokens` function used to get the page access tokens. The `user
 var fbRes = facebookEP.getPageAccessTokens(userId);
 match fbRes {
     AccessTokens list => { accessTokenList = list; io:println(accessTokenList); }
-    FacebookError e => test:assertFail(msg = e.message);
+    FacebookError e => io:println(e);
 }
 ```
 

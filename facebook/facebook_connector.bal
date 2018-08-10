@@ -138,15 +138,13 @@ function FacebookConnector::deletePost(string postId) returns (boolean)|Facebook
 function FacebookConnector::retrieveEventDetails(string eventId) returns Event|FacebookError {
     endpoint http:Client httpClient = self.httpClient;
     http:Request request = new;
-    FacebookError facebookError = {};
     string facebookPath = VERSION + PATH_SEPARATOR + eventId;
     request.setHeader("Accept", "application/json");
     var httpResponse = httpClient->get(facebookPath, message = request);
 
     match httpResponse {
         error err => {
-            facebookError.message = err.message;
-            facebookError.cause = err.cause;
+            FacebookError facebookError = { message: "Error retrieving event details", cause: err };
             return facebookError;
         }
         http:Response response => {
@@ -154,23 +152,23 @@ function FacebookConnector::retrieveEventDetails(string eventId) returns Event|F
             var facebookJSONResponse = response.getJsonPayload();
             match facebookJSONResponse {
                 error err => {
-                    facebookError.message = "Error occured while extracting JSON Payload";
-                    facebookError.cause = err.cause;
+                    FacebookError facebookError = { message: "Error occured while extracting JSON Payload",
+                                                    cause: err };
                     return facebookError;
                 }
                 json jsonResponse => {
                     if (statusCode == http:OK_200) {
                         match(<Event> jsonResponse) {
                             Event fbEvent => return fbEvent;
-                            error e => {
-                                facebookError.message = "Error converting JSON to Event record";
-                                facebookError.cause = e;
+                            error err => {
+                                FacebookError facebookError = { message: "Error converting JSON to Event record",
+                                                                cause: err };
                                 return facebookError;
                             }
                         }
                     } else {
-                        facebookError.message = jsonResponse.error.message.toString();
-                        facebookError.statusCode = statusCode;
+                        FacebookError facebookError = { message: jsonResponse.error.message.toString(),
+                                                        statusCode: statusCode };
                         return facebookError;
                     }
                 }

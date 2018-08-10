@@ -94,6 +94,12 @@ public type FacebookConnector object {
     }
     public function getPageAccessTokens(string userId) returns AccessTokens|FacebookError;
 
+    documentation {
+        Retrieve details of the event
+        P{{eventId}} - The event ID
+        R{{}} - `Event` object on success or `FacebookError` on failure
+    }
+    public function retrieveEventDetails(string eventId) returns Event|FacebookError;
 };
 
 documentation {
@@ -189,4 +195,73 @@ public type AccessTokenData record {
     string pageName;
     string pageAccessToken;
     string pageId;
+};
+
+documentation {
+    Event object.
+    F{{id}} - The event ID.
+    F{{attending_count}} - The number of people attending.
+    F{{can_guests_invite}} - Whether guests can invite others.
+    F{{category}} - The category the event belongs to.
+    F{{declined_count}} - The number of people attending.
+    F{{description}} - Description of the event.
+    F{{discount_code_enabled}} - Whether a discount code is enabled for the event.
+    F{{end_time}} - The end time if set.
+    F{{guest_list_enabled}} - Whether the guest list can be seen.
+    F{{interested_count}} - Number of people interested in the event.
+    F{{is_canceled}} - Whether the event is marked cancelled.
+    F{{is_draft}} - Whether the event is drafted or published.
+    F{{is_page_owned}} - Whether the event was created by a page.
+    F{{maybe_count}} - Number of people who have marked attendance as maybe.
+    F{{name}} - The name of the event.
+    F{{noreply_count}} - The number of people who did not reply to the invitation.
+    F{{scheduled_publish_time}} - The time the event is scheduled to be published.
+    F{{start_time}} - The time the event is scheduled to start.
+    F{{ticket_uri}} - The link to buy tickets at for the event.
+    F{{ticket_uri_start_sales_time}} - The time at which tickets will go on sale.
+    F{{ticketing_privacy_uri}} - The link to the privacy policies of the ticket seller.
+    F{{ticketing_terms_uri}} - The link to the terms of service of the ticket seller.
+    F{{timezone}} - The timezone of the event.
+    F{{^"type"}} - The type of the event.
+}
+public type Event record {
+    string id;
+    int? attending_count;
+    boolean? can_guests_invite;
+    string? category;
+    int? declined_count;
+    string? description;
+    boolean? discount_code_enabled;
+    string? end_time;
+    boolean? guest_list_enabled;
+    int? interested_count;
+    boolean? is_canceled;
+    boolean? is_draft;
+    boolean? is_page_owned;
+    int? maybe_count;
+    string name;
+    int? noreply_count;
+    Place? place;
+    string? scheduled_publish_time;
+    string start_time;
+    string? ticket_uri;
+    string? ticket_uri_start_sales_time;
+    string? ticketing_privacy_uri;
+    string? ticketing_terms_uri;
+    string? timezone;
+    string? ^"type";
+    // TODO Add missing fields
+};
+
+documentation {
+    Contains Place details.
+    F{{id}} - The identifier for the place.
+    F{{name}} - The name of the place.
+    F{{overall_rating}} - The overall rating of the place.
+}
+public type Place record {
+    string? id;
+    //todo" Add Location field
+    string name;
+    float? overall_rating;
 };
